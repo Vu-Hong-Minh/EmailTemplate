@@ -3,9 +3,8 @@ from datetime import datetime
 
 class EmailTemplates:
 
-    def __init__(self, id=None, merchant_id=None, employee_id=None, title=None, content=None, created_at=datetime.now(), updated_by=None, updated_at=datetime.now()):
+    def __init__(self, id=None, employee_id=None, title=None, content=None, created_at=datetime.now(), updated_by=None, updated_at=datetime.now()):
         self.id = id
-        self.merchant_id = merchant_id
         self.employee_id = employee_id
         self.title = title
         self.content = content
@@ -20,15 +19,14 @@ class EmailTemplates:
         return result
 
     def get_email_template_by_id(self):
-        sql = "Select merchant_id, title, content from email_template where id ={}".format(self.id)
+        sql = "Select merchant_id, title, content from email_template inner join employee on employee_id = employee.id where email_template.id = {}".format(self.id)
         data = GetData(sql=sql)
         result = data.get_data()
         return result
 
 
     def insert_email_template(self):
-        sql = "insert into email_template(merchant_id, employee_id, title, content, created_at) values ({}, {}, \'{}\',\'{}\', \'{}\')".format(
-            self.merchant_id, self.employee_id, self.title, self.content, self.created_at)
+        sql = "insert into email_template(employee_id, title, content, created_at) values ({}, \'{}\',\'{}\', \'{}\')".format(self.employee_id, self.title, self.content, self.created_at)
         data = GetData(sql=sql)
         data.update_data()
 
@@ -43,14 +41,14 @@ class EmailTemplates:
         data = GetData(sql=sql)
         data.update_data()
 
-    def get_email_template_list(self):
-        sql = "select title, content from email_template where merchant_id = {}".format(self.merchant_id)
+    def get_email_template_list(self, merchant_id):
+        sql = "select title, content from email_template inner join employee on employee_id = employee.id where merchant_id = {} ".format(merchant_id)
         data = GetData(sql=sql)
         result = data.get_data_list()
         return result
 
-    def search_email_template(self, q):
-        sql = 'Select title, content from email_template where merchant_id = {} and title like "%{}%"'.format(self.merchant_id, q)
+    def search_email_template(self, merchant_id, q):
+        sql = 'Select title, content from email_template inner join employee on employee_id = employee.id where merchant_id = {} and title like "%{}%"'.format(merchant_id, q)
         data = GetData(sql=sql)
         result = data.get_data_list()
         return result

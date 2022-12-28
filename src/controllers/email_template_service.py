@@ -59,8 +59,8 @@ def email_template():
     if request.method == 'GET':
         data = request.json
         merchant_id = data.get('merchant_id')
-        email = EmailTemplates(merchant_id=merchant_id)
-        result = email.get_email_template_list()
+        email = EmailTemplates()
+        result = email.get_email_template_list(merchant_id=merchant_id)
         data = []
         for i in result:
             temp = {
@@ -77,11 +77,10 @@ def email_template():
     #Api thêm mới mẫu email
     elif request.method == 'POST':
         data = request.json
-        merchant_id = data.get('merchant_id')
         employee_id = data.get('employee_id')
         title = data.get('title')
         content = data.get('content')
-        email = EmailTemplates(merchant_id=merchant_id, employee_id=employee_id, title=title, content=content)
+        email = EmailTemplates(employee_id=employee_id, title=title, content=content)
         result1 = email.check_title_email_template()
         if result1 == None:
             email.insert_email_template()
@@ -105,8 +104,8 @@ def search_email_template_service():
     data = request.json
     q = request.args['q']
     merchant_id = data.get('merchant_id')
-    email = EmailTemplates(merchant_id=merchant_id)
-    result = email.search_email_template(q)
+    email = EmailTemplates()
+    result = email.search_email_template(merchant_id=merchant_id, q=q)
     data = []
     for i in result:
         temp = {
@@ -125,7 +124,6 @@ def search_email_template_service():
 def copy_email_template():
     data = request.json
     email_template_id = data.get('email_template_id')
-    merchant_id = data.get('merchant_id')
     employee_id = data.get('employee_id')
     #Lấy thông tin email cần copy
     result = EmailTemplates(id=email_template_id).get_email_template_by_id()
@@ -133,14 +131,12 @@ def copy_email_template():
     content = result[2]
     title = title + " (1)"
     #Check title email và thêm mới email
-    email = EmailTemplates(merchant_id=merchant_id, employee_id=employee_id, title=title, content=content)
+    email = EmailTemplates(employee_id=employee_id, title=title, content=content)
     while email.check_title_email_template() != None:
         if title[-2].isnumeric():
             temp = int(title[-2]) + 1
             title = title[:-2] + str(temp) + ")"
-        else:
-            title = title + " (1)"
-        email = EmailTemplates(merchant_id=merchant_id, employee_id=employee_id, title=title, content=content)
+        email = EmailTemplates(employee_id=employee_id, title=title, content=content)
     email.insert_email_template()
     return jsonify({
         "code": 200,
