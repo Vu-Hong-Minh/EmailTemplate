@@ -48,6 +48,6 @@ class EmailTemplates:
 
     def search_email_template(self, merchant_id, q):
         sql = 'Select title, content from email_template inner join employee on employee_id = employee.id where merchant_id = {} and title like "%{}%"'.format(merchant_id, q)
-        data = ConnDBEmailTeplate()
+        data = ConnDBEmailTemplate()
         result = data.get_data_list(sql=sql)
         return result
