@@ -1,6 +1,6 @@
 import mysql.connector
 # Kết nối tới MySQL.
-class conn_SQL:
+class ConnSQL:
     def __init__(self, host, db, user, password):
         self.host = host
         self.db = db
@@ -47,6 +47,6 @@ class conn_SQL:
             self.connection.close()
 
 # Kết nối đến db email_template
-class conn_SQL_email_teplate(conn_SQL):
+class ConnDBEmailTeplate(ConnSQL):
     def __init__(self, host='localhost', db='email_template', user='root', password='123456@Aabc'):
         super().__init__(host, db, user, password)
